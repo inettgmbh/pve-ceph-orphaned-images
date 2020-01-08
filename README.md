@@ -7,6 +7,10 @@ Copyright (c) 2018-2020 Marco Gabriel, inett GmbH, https://www.inett.de
 
 This program is free software licensed under AGPLv3.
 
+## Purpose
+
+Sometimes when disk images are moved or VMs are removed from the cluster, a Ceph disk images still has some watchers. This means, that the image can't be removed at the moment and you should try again later what all watchers are gone. If this happens frequently because a cluster runs for a few years, there may be a collection of old, outdated images that aren't used anymore and just waste some space on your Ceph storage. Proxmox VE show only images that are defined in a VM/CT configuration. So it is a cumbersome process to list all images in a Ceph cluster and compare them manually with your existing VM configurations if they are still being used.
+
 ## Usage
 
 Just run the script by typing `pve-ceph-orphaned-images` and the script lists RBD images in your ceph pools that are not used in any VM configurations. It works for both KVM and LXC machines and scans all pools within ceph.
