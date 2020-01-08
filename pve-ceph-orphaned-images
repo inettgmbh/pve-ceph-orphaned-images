@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# pve-ceph-orphaned-images is a tool for finding orphaned images on a Proxmox VE Ceph cluster
+# Copyright (c) 2018-2020 Marco Gabriel, inett GmbH
+# Authors: Marco Gabriel, inett GmbH
+#
+# This program is free software licensed under AGPLv3.
+# You should have received a copy of the GNU Affero General Public License Version 3 
+# along with this program 
+#
+
+echo working - please wait..
+echo POOL/IMAGE SIZE
+
+pools=$( ceph osd pool ls )
+
+for pool in $pools;
+do
+	images=$( rbd ls $pool )
+	for i in $images;
+	do
+		if [ $(grep $i /etc/pve/nodes/*/qemu-server/* /etc/pve/nodes/*/lxc/* | wc -l) -lt 1 ] 
+		then
+			size=""
+			if [ $(rbd du $pool/$i 2>/dev/null|grep TOTAL|wc -l) -eq 1 ]
+			then
+				size=$(rbd du $pool/$i 2>/dev/null|grep TOTAL|awk '{print $2 $3}')
+			else
+				size=$(rbd du $pool/$i 2>/dev/null|grep $i|awk '{print $2 $3}')
+			fi
+			echo $pool/$i $size|column -t
+		fi
+	done
+done
+
