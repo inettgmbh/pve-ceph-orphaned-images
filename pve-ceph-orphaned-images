@@ -19,7 +19,7 @@ do
 	images=$( rbd ls $pool )
 	for i in $images;
 	do
-		if [ $(grep $pool:$i /etc/pve/nodes/*/qemu-server/* /etc/pve/nodes/*/lxc/* | wc -l) -lt 1 ] 
+		if [ $(grep $pool:.*$i /etc/pve/nodes/*/qemu-server/* /etc/pve/nodes/*/lxc/* | wc -l) -lt 1 ] 
 		then
 			size=""
 			if [ $(rbd du $pool/$i 2>/dev/null|grep TOTAL|wc -l) -eq 1 ]
